@@ -7,6 +7,8 @@
     "packages/*"
   ],
   "scripts": {
+    "web": "yarn workspace web",
+    "ui": "yarn workspace ui",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
