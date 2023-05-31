@@ -7,8 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "hw": "yarn workspace @holywater-jeong/web",
-    "tc": "yarn workspace @ts-world/components",
+    "hb": "yarn workspace @holywater-jeong/blog",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
@@ -20,8 +19,8 @@
     "turbo": "latest"
   },
   "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
+    "npm": ">=9.0.0",
+    "node": ">=18.0.0"
   },
   "dependencies": {},
   "packageManager": "yarn@1.22.19"
