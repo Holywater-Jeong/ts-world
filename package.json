@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "hb": "yarn workspace @holywater-jeong/blog",
+    "web": "yarn workspace @holywater-jeong/web",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
