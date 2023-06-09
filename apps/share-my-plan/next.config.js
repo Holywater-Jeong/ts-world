@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['tsconfig'],
+  transpilePackages: ['@holywater-jeong/tsconfig', '@holywater-jeong/utils'],
   experimental: {
     externalDir: true,
+    swcMinify: true,
   },
 };
 

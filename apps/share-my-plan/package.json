@@ -1,5 +1,5 @@
 {
-  "name": "@holywater-jeong/web",
+  "name": "@holywater-jeong/share-my-plan",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@holywater-jeong/utils": "*",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",
     "autoprefixer": "10.4.14",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
+    "jotai": "^2.1.1",
     "next": "13.4.4",
     "postcss": "8.4.24",
     "react": "18.2.0",
@@ -23,6 +25,6 @@
     "typescript": "5.0.4"
   },
   "devDependencies": {
-    "tsconfig": "*"
+    "@holywater-jeong/tsconfig": "*"
   }
 }
