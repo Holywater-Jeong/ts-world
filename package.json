@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "web": "yarn workspace @holywater-jeong/web",
+    "utils": "yarn workspace @holywater-jeong/utils",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
