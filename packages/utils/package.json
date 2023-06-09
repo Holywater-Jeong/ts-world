@@ -2,8 +2,5 @@
   "name": "@holywater-jeong/utils",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "jotai": "^2.1.1"
-  }
+  "license": "MIT"
 }
