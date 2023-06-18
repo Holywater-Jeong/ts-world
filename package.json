@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "smp": "yarn workspace @holywater-jeong/share-my-plan",
+    "mq": "yarn workspace @holywater-jeong/my-quest",
     "utils": "yarn workspace @holywater-jeong/utils",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
