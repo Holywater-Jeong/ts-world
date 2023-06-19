@@ -218,9 +218,8 @@ const Templates = () => {
   const [templates, setTemplates] = useAtom(templatesAtom);
 
   const selectedTabsTemplatesOrders = templatesOrders?.get(selectedTabPk);
-  if (!selectedTabsTemplatesOrders) return null;
 
-  const templatesForComponent = selectedTabsTemplatesOrders.map((template) =>
+  const templatesForComponent = selectedTabsTemplatesOrders?.map((template) =>
     templates?.get(template),
   );
 
@@ -250,7 +249,7 @@ const Templates = () => {
       <button className="border border-2 border-black" onClick={addTemplate}>
         템플릿 추가 +
       </button>
-      {templatesForComponent.map((template) => (
+      {templatesForComponent?.map((template) => (
         <Template key={template?.name} name={template?.name} />
       ))}
     </div>
