@@ -192,6 +192,7 @@ const Tabs = () => {
         탭 추가 +
       </button>
       {tabsForComponent.map((tab) => (
+        // TODO: 여기 타입을 어떻게 해결할 수 있을지 고민해보자;
         <Tab key={tab?.name} {...tab} />
       ))}
     </div>
@@ -249,7 +250,8 @@ const Templates = () => {
         템플릿 추가 +
       </button>
       {templatesForComponent?.map((template) => (
-        <Template key={template?.name} name={template?.name} />
+        // TODO: 여기 타입을 어떻게 해결할 수 있을지 고민해보자;
+        <Template key={template?.name} {...template} />
       ))}
     </div>
   );
