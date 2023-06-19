@@ -11,6 +11,9 @@ import {
   ComponentsPk,
   TabType,
   TemplateType,
+  ItemType,
+  ItemMap,
+  ItemOrderType,
 } from '~/types/multi-dimensional-data';
 
 import {
@@ -19,6 +22,8 @@ import {
   selectedTabPkAtom,
   templatesAtom,
   templatesOrdersAtom,
+  itemsAtom,
+  itemsOrdersAtom,
 } from '~/store/multi-dimensional-data';
 
 /**
@@ -80,9 +85,14 @@ const originShoppingTabs: TabEntity[] = [
 export const MultiDimensionalData = () => {
   const setTabs = useSetAtom(tabsAtom);
   const setTabsOrder = useSetAtom(tabsOrdersAtom);
+
   const setSelectedTabPk = useSetAtom(selectedTabPkAtom);
+
   const setTemplates = useSetAtom(templatesAtom);
   const setTemplatesOrders = useSetAtom(templatesOrdersAtom);
+
+  const setItems = useSetAtom(itemsAtom);
+  const setItemsOrders = useSetAtom(itemsOrdersAtom);
 
   const initTabs = () => {
     const tabs: TabMap = new Map();
@@ -90,6 +100,9 @@ export const MultiDimensionalData = () => {
 
     const templates: TemplateMap = new Map();
     const templatesOrders: TemplateOrderType = new Map();
+
+    const items: ItemMap = new Map();
+    const itemsOrders: ItemOrderType = new Map();
 
     originShoppingTabs.forEach((tab) => {
       const tabPk = tab.pk;
@@ -101,11 +114,21 @@ export const MultiDimensionalData = () => {
 
       tab.templates?.forEach((template) => {
         const templatePk = template.pk;
-        templates.set(templatePk, template);
         templateOrdersForSet.push(templatePk);
+        templates.set(templatePk, template);
+
+        const itemOrdersForSet: ComponentsPk[] = [];
+
+        template.items?.forEach((item) => {
+          const itemPk = item.pk;
+          itemOrdersForSet.push(item.pk);
+          items.set(itemPk, item);
+        });
+
+        itemsOrders.set(templatePk, itemOrdersForSet);
       });
 
-      templatesOrders.set(tab.pk, templateOrdersForSet);
+      templatesOrders.set(tabPk, templateOrdersForSet);
     });
 
     setTabsOrder(tabsOrders);
@@ -115,6 +138,9 @@ export const MultiDimensionalData = () => {
 
     setTemplates(templates);
     setTemplatesOrders(templatesOrders);
+
+    setItems(items);
+    setItemsOrders(itemsOrders);
   };
 
   useEffect(() => {
@@ -158,15 +184,16 @@ const Tabs = () => {
         탭 추가 +
       </button>
       {tabsForComponent.map((tab) => (
-        // TODO: 여기 타입을 어떻게 해결할 수 있을지 고민해보자;
         <Tab key={tab?.name} {...tab} />
       ))}
     </div>
   );
 };
 
-const Tab = ({ name, pk }: TabType) => {
+const Tab = ({ name, pk }: Partial<TabType>) => {
   const setSelectedTabPk = useSetAtom(selectedTabPkAtom);
+
+  if (!pk) return null;
 
   const handleTabClick = () => {
     setSelectedTabPk(pk);
@@ -193,7 +220,6 @@ const Templates = () => {
     const newTemplate: TemplateType = {
       pk: newTemplatePk,
       name: `새로운 템플릿`,
-      items: [],
     };
 
     setTemplates((prevTemplates) => new Map(prevTemplates).set(newTemplatePk, newTemplate));
@@ -223,4 +249,43 @@ const Templates = () => {
   );
 };
 
-const Template = ({ name }: TemplateType) => <div>{name}</div>;
+const Template = ({ name, pk }: Partial<TemplateType>) => {
+  const [items, setItems] = useAtom(itemsAtom);
+  const [itemsOrders, setItemsOrders] = useAtom(itemsOrdersAtom);
+
+  if (!pk) return null;
+
+  const itemsForComponent = itemsOrders?.get(pk)?.map((item) => items?.get(item));
+
+  const addProduct = () => {
+    const newItemPk = `new-template-${items?.size ? items.size + 1 : 1}`;
+    const newItem: ItemType = {
+      pk: newItemPk,
+      name: `새로운 아이템`,
+    };
+
+    setItems((prevItems) => new Map(prevItems).set(newItemPk, newItem));
+    setItemsOrders((prevItemsOrders) => {
+      const prevItemsOrdersMap = new Map(prevItemsOrders);
+      const prevOrders = prevItemsOrdersMap?.get(pk);
+
+      prevItemsOrdersMap?.set(pk, prevOrders ? [newItemPk, ...prevOrders] : [newItemPk]);
+
+      return prevItemsOrdersMap;
+    });
+  };
+
+  return (
+    <div className="flex flex-col justify-start border border-2 border-black">
+      <div>{name}</div>
+      <button className="border border-2 border-black" onClick={addProduct}>
+        상품 추가 +
+      </button>
+      {itemsForComponent?.map((item) => (
+        <Item key={item?.name} {...item} />
+      ))}
+    </div>
+  );
+};
+
+const Item = ({ name }: Partial<ItemType>) => <div>{name}</div>;
