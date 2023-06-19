@@ -179,7 +179,7 @@ const Tabs = () => {
   };
 
   return (
-    <div className="flex justify-start">
+    <div className="flex justify-start mb-1.5">
       <button className="border border-2 border-black" onClick={addTab}>
         탭 추가 +
       </button>
@@ -276,9 +276,9 @@ const Template = ({ name, pk }: Partial<TemplateType>) => {
   };
 
   return (
-    <div className="flex flex-col justify-start border border-2 border-black">
+    <div className="flex flex-col justify-start border border-2 border-black my-1.5">
       <div>{name}</div>
-      <button className="border border-2 border-black" onClick={addProduct}>
+      <button className="border border-2 border-neutral-300" onClick={addProduct}>
         상품 추가 +
       </button>
       {itemsForComponent?.map((item) => (
