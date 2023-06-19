@@ -2,16 +2,19 @@
 import { useEffect } from 'react';
 import { atom, useSetAtom, useAtomValue } from 'jotai';
 
-type Tab = Map<number, Pick<OriginShoppingTab, 'pk' | 'name'>>;
-type Template = Map<number, OriginTemplate>;
-type TemplatesOrders = Map<number, number[]>;
+type Orders = number[];
 
-const tabsAtom = atom<Tab | null>(null);
-const tabsOrdersAtom = atom<number[]>([]);
+type TabType = Map<number, Pick<OriginShoppingTab, 'pk' | 'name'>>;
+type TabOrderType = Orders;
+type TemplateType = Map<number, OriginTemplate>;
+type TemplateOrderType = Map<number, Orders>;
+
+const tabsAtom = atom<TabType | null>(null);
+const tabsOrdersAtom = atom<TabOrderType>([]);
 const selectedTabAtom = atom<number>(0);
 
-const templatesAtom = atom<Template | null>(null);
-const templatesOrdersAtom = atom<TemplatesOrders | null>(null);
+const templatesAtom = atom<TemplateType | null>(null);
+const templatesOrdersAtom = atom<TemplateOrderType | null>(null);
 
 type OriginShoppingTab = {
   pk: number;
@@ -89,28 +92,34 @@ export const MultiDimensionalData = () => {
   const setTemplatesOrders = useSetAtom(templatesOrdersAtom);
 
   const initTabs = () => {
-    const tabsOrders: number[] = [];
-    const tabs: Tab = new Map();
-    const templates: Template = new Map();
-    const templatesOrders = new Map<number, number[]>();
+    const tabs: TabType = new Map();
+    const tabsOrders: TabOrderType = [];
+
+    const templates: TemplateType = new Map();
+    const templatesOrders: TemplateOrderType = new Map();
 
     originShoppingTabs.forEach((tab) => {
-      tabsOrders.push(tab.pk);
-      tabs.set(tab.pk, { pk: tab.pk, name: tab.name });
+      const tabPk = tab.pk;
 
-      const TemplateOrders: number[] = [];
+      tabsOrders.push(tabPk);
+      tabs.set(tabPk, { pk: tabPk, name: tab.name });
+
+      const templateOrdersForSet: number[] = [];
 
       tab.templates?.forEach((template) => {
-        templates.set(template.pk, template);
-        TemplateOrders.push(template.pk);
+        const templatePk = template.pk;
+        templates.set(templatePk, template);
+        templateOrdersForSet.push(templatePk);
       });
 
-      templatesOrders.set(tab.pk, TemplateOrders);
+      templatesOrders.set(tab.pk, templateOrdersForSet);
     });
 
     setTabsOrder(tabsOrders);
     setTabs(tabs);
-    setSelectedTab(tabsOrders[1]);
+
+    setSelectedTab(tabsOrders[0]);
+
     setTemplates(templates);
     setTemplatesOrders(templatesOrders);
   };
