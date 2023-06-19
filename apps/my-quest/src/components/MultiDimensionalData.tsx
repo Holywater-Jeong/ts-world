@@ -130,12 +130,8 @@ export const MultiDimensionalData = () => {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="flex justify-between">
-        <Tabs />
-      </div>
-      <div className="flex flex-col justify-start">
-        <Templates />
-      </div>
+      <Tabs />
+      <Templates />
     </div>
   );
 };
@@ -145,13 +141,13 @@ const Tabs = () => {
   const tabsOrders = useAtomValue(tabsOrdersAtom);
 
   return (
-    <>
+    <div className="flex justify-between">
       {tabsOrders.map((tabOrder) => {
         const tab = tabs?.get(tabOrder);
 
         return <div key={tab?.name}>{tab?.name}</div>;
       })}
-    </>
+    </div>
   );
 };
 
@@ -168,10 +164,10 @@ const Templates = () => {
   );
 
   return (
-    <>
+    <div className="flex flex-col justify-start">
       {templatesForComponent.map((template) => (
         <span key={template?.name}>{template?.name}</span>
       ))}
-    </>
+    </div>
   );
 };
