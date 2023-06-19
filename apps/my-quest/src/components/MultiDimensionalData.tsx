@@ -1,23 +1,24 @@
 'use client';
 import { useEffect } from 'react';
-import { atom, useSetAtom, useAtomValue } from 'jotai';
+import { atom, useSetAtom, useAtomValue, useAtom } from 'jotai';
 
 /**
  * common
  */
-type Orders = number[];
+type Pk = number | string;
+type Orders = Pk[];
 
 /**
  * entity
  */
 type TabEntity = {
-  pk: number;
+  pk: number | string;
   name: string;
   templates: TemplateEntity[];
 };
 
 type TemplateEntity = {
-  pk: number;
+  pk: number | string;
   name: string;
   products: {
     pk: number;
@@ -30,11 +31,11 @@ type TemplateEntity = {
  */
 type TabType = Pick<TabEntity, 'pk' | 'name'>;
 
-type TabMap = Map<number, TabType>;
-type TemplateMap = Map<number | string, TemplateEntity>;
+type TabMap = Map<Pk, TabType>;
+type TemplateMap = Map<Pk | string, TemplateEntity>;
 
 type TabOrderType = Orders;
-type TemplateOrderType = Map<number | string, Orders>;
+type TemplateOrderType = Map<Pk | string, Orders>;
 
 /**
  * atom
@@ -42,7 +43,7 @@ type TemplateOrderType = Map<number | string, Orders>;
 
 const tabsAtom = atom<TabMap | null>(null);
 const tabsOrdersAtom = atom<TabOrderType>([]);
-const selectedTabAtom = atom<number>(0);
+const selectedTabAtom = atom<Pk>(0);
 
 const templatesAtom = atom<TemplateMap | null>(null);
 const templatesOrdersAtom = atom<TemplateOrderType | null>(null);
@@ -123,7 +124,7 @@ export const MultiDimensionalData = () => {
       tabsOrders.push(tabPk);
       tabs.set(tabPk, { pk: tabPk, name: tab.name });
 
-      const templateOrdersForSet: number[] = [];
+      const templateOrdersForSet: Pk[] = [];
 
       tab.templates?.forEach((template) => {
         const templatePk = template.pk;
@@ -156,16 +157,31 @@ export const MultiDimensionalData = () => {
 };
 
 const Tabs = () => {
-  const tabs = useAtomValue(tabsAtom);
-  const tabsOrders = useAtomValue(tabsOrdersAtom);
+  const [tabs, setTabs] = useAtom(tabsAtom);
+  const [tabsOrders, setTabsOrders] = useAtom(tabsOrdersAtom);
 
   const tabsForComponent = tabsOrders.map((tabOrder) => {
     const tab = tabs?.get(tabOrder);
     return tab;
   });
 
+  const addTab = () => {
+    // 추가
+    const newTabPk = `new-tab-${tabs?.size ? tabs.size + 1 : 1}`;
+    const newTab: TabType = {
+      pk: newTabPk,
+      name: `새로운 탭`,
+    };
+
+    setTabs((prevTabs) => new Map(prevTabs).set(newTabPk, newTab));
+    setTabsOrders((prevTabsOrders) => [newTabPk, ...prevTabsOrders]);
+  };
+
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-start">
+      <button className="border border-2 border-black" onClick={addTab}>
+        추가
+      </button>
       {tabsForComponent.map((tab) => (
         <Tab key={tab?.name} {...tab} />
       ))}
@@ -180,7 +196,11 @@ const Tab = ({ name, pk }: TabType) => {
     setSelectedTab(pk);
   };
 
-  return <div onClick={handleTabClick}>{name}</div>;
+  return (
+    <button className="border border-2 border-black" onClick={handleTabClick}>
+      {name}
+    </button>
+  );
 };
 
 const Templates = () => {
