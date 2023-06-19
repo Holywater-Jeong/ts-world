@@ -2,27 +2,21 @@
 import { useEffect } from 'react';
 import { atom, useSetAtom, useAtomValue } from 'jotai';
 
+/**
+ * common
+ */
 type Orders = number[];
 
-type TabType = Map<number, Pick<OriginShoppingTab, 'pk' | 'name'>>;
-type TabOrderType = Orders;
-type TemplateType = Map<number, OriginTemplate>;
-type TemplateOrderType = Map<number, Orders>;
-
-const tabsAtom = atom<TabType | null>(null);
-const tabsOrdersAtom = atom<TabOrderType>([]);
-const selectedTabAtom = atom<number>(0);
-
-const templatesAtom = atom<TemplateType | null>(null);
-const templatesOrdersAtom = atom<TemplateOrderType | null>(null);
-
-type OriginShoppingTab = {
+/**
+ * entity
+ */
+type TabEntity = {
   pk: number;
   name: string;
-  templates: OriginTemplate[];
+  templates: TemplateEntity[];
 };
 
-type OriginTemplate = {
+type TemplateEntity = {
   pk: number;
   name: string;
   products: {
@@ -31,7 +25,32 @@ type OriginTemplate = {
   }[];
 };
 
-const originShoppingTabs: OriginShoppingTab[] = [
+/**
+ * for state mangement & components
+ */
+type TabType = Pick<TabEntity, 'pk' | 'name'>;
+
+type TabMap = Map<number, TabType>;
+type TemplateMap = Map<number | string, TemplateEntity>;
+
+type TabOrderType = Orders;
+type TemplateOrderType = Map<number | string, Orders>;
+
+/**
+ * atom
+ */
+
+const tabsAtom = atom<TabMap | null>(null);
+const tabsOrdersAtom = atom<TabOrderType>([]);
+const selectedTabAtom = atom<number>(0);
+
+const templatesAtom = atom<TemplateMap | null>(null);
+const templatesOrdersAtom = atom<TemplateOrderType | null>(null);
+
+/**
+ * temp data
+ */
+const originShoppingTabs: TabEntity[] = [
   {
     pk: 1,
     name: '쇼핑 탭 1',
@@ -92,10 +111,10 @@ export const MultiDimensionalData = () => {
   const setTemplatesOrders = useSetAtom(templatesOrdersAtom);
 
   const initTabs = () => {
-    const tabs: TabType = new Map();
+    const tabs: TabMap = new Map();
     const tabsOrders: TabOrderType = [];
 
-    const templates: TemplateType = new Map();
+    const templates: TemplateMap = new Map();
     const templatesOrders: TemplateOrderType = new Map();
 
     originShoppingTabs.forEach((tab) => {
@@ -140,15 +159,28 @@ const Tabs = () => {
   const tabs = useAtomValue(tabsAtom);
   const tabsOrders = useAtomValue(tabsOrdersAtom);
 
+  const tabsForComponent = tabsOrders.map((tabOrder) => {
+    const tab = tabs?.get(tabOrder);
+    return tab;
+  });
+
   return (
     <div className="flex justify-between">
-      {tabsOrders.map((tabOrder) => {
-        const tab = tabs?.get(tabOrder);
-
-        return <div key={tab?.name}>{tab?.name}</div>;
-      })}
+      {tabsForComponent.map((tab) => (
+        <Tab key={tab?.name} {...tab} />
+      ))}
     </div>
   );
+};
+
+const Tab = ({ name, pk }: TabType) => {
+  const setSelectedTab = useSetAtom(selectedTabAtom);
+
+  const handleTabClick = () => {
+    setSelectedTab(pk);
+  };
+
+  return <div onClick={handleTabClick}>{name}</div>;
 };
 
 const Templates = () => {
@@ -166,8 +198,10 @@ const Templates = () => {
   return (
     <div className="flex flex-col justify-start">
       {templatesForComponent.map((template) => (
-        <span key={template?.name}>{template?.name}</span>
+        <Template key={template?.name} name={template?.name} />
       ))}
     </div>
   );
 };
+
+const Template = ({ name }: TemplateEntity) => <div>{name}</div>;
