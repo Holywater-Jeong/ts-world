@@ -36,12 +36,13 @@ type ItemEntity = {
  * for state mangement & components
  */
 type TabType = Pick<TabEntity, 'name'> & WithComponentsPk;
+type TemplateType = Omit<TemplateEntity, 'pk'> & WithComponentsPk;
 
 type TabMap = Map<ComponentsPk, TabType>;
-type TemplateMap = Map<ComponentsPk | string, TemplateEntity>;
+type TemplateMap = Map<ComponentsPk, TemplateType>;
 
 type TabOrderType = Orders;
-type TemplateOrderType = Map<ComponentsPk | string, Orders>;
+type TemplateOrderType = Map<ComponentsPk, Orders>;
 
 /**
  * atom
@@ -49,7 +50,7 @@ type TemplateOrderType = Map<ComponentsPk | string, Orders>;
 
 const tabsAtom = atom<TabMap | null>(null);
 const tabsOrdersAtom = atom<TabOrderType>([]);
-const selectedTabAtom = atom<ComponentsPk>(0);
+const selectedTabPkAtom = atom<ComponentsPk>(0);
 
 const templatesAtom = atom<TemplateMap | null>(null);
 const templatesOrdersAtom = atom<TemplateOrderType | null>(null);
@@ -113,7 +114,7 @@ const originShoppingTabs: TabEntity[] = [
 export const MultiDimensionalData = () => {
   const setTabs = useSetAtom(tabsAtom);
   const setTabsOrder = useSetAtom(tabsOrdersAtom);
-  const setSelectedTab = useSetAtom(selectedTabAtom);
+  const setSelectedTabPk = useSetAtom(selectedTabPkAtom);
   const setTemplates = useSetAtom(templatesAtom);
   const setTemplatesOrders = useSetAtom(templatesOrdersAtom);
 
@@ -144,7 +145,7 @@ export const MultiDimensionalData = () => {
     setTabsOrder(tabsOrders);
     setTabs(tabs);
 
-    setSelectedTab(tabsOrders[0]);
+    setSelectedTabPk(tabsOrders[0]);
 
     setTemplates(templates);
     setTemplatesOrders(templatesOrders);
@@ -165,7 +166,7 @@ export const MultiDimensionalData = () => {
 const Tabs = () => {
   const [tabs, setTabs] = useAtom(tabsAtom);
   const [tabsOrders, setTabsOrders] = useAtom(tabsOrdersAtom);
-  const setSelectedTab = useSetAtom(selectedTabAtom);
+  const setSelectedTabPk = useSetAtom(selectedTabPkAtom);
 
   const tabsForComponent = tabsOrders.map((tabOrder) => {
     const tab = tabs?.get(tabOrder);
@@ -182,7 +183,7 @@ const Tabs = () => {
 
     setTabs((prevTabs) => new Map(prevTabs).set(newTabPk, newTab));
     setTabsOrders((prevTabsOrders) => [newTabPk, ...prevTabsOrders]);
-    setSelectedTab(newTabPk);
+    setSelectedTabPk(newTabPk);
   };
 
   return (
@@ -198,10 +199,10 @@ const Tabs = () => {
 };
 
 const Tab = ({ name, pk }: TabType) => {
-  const setSelectedTab = useSetAtom(selectedTabAtom);
+  const setSelectedTabPk = useSetAtom(selectedTabPkAtom);
 
   const handleTabClick = () => {
-    setSelectedTab(pk);
+    setSelectedTabPk(pk);
   };
 
   return (
@@ -212,19 +213,43 @@ const Tab = ({ name, pk }: TabType) => {
 };
 
 const Templates = () => {
-  const selectedTab = useAtomValue(selectedTabAtom);
-  const templatesOrders = useAtomValue(templatesOrdersAtom);
-  const templates = useAtomValue(templatesAtom);
+  const selectedTabPk = useAtomValue(selectedTabPkAtom);
+  const [templatesOrders, setTemplatesOrders] = useAtom(templatesOrdersAtom);
+  const [templates, setTemplates] = useAtom(templatesAtom);
 
-  const selectedTabsTemplatesOrders = templatesOrders?.get(selectedTab);
+  const selectedTabsTemplatesOrders = templatesOrders?.get(selectedTabPk);
   if (!selectedTabsTemplatesOrders) return null;
 
   const templatesForComponent = selectedTabsTemplatesOrders.map((template) =>
     templates?.get(template),
   );
 
+  const addTemplate = () => {
+    const newTemplatePk = `new-template-${templates?.size ? templates.size + 1 : 1}`;
+    const newTemplate: TemplateType = {
+      pk: newTemplatePk,
+      name: `새로운 템플릿`,
+      items: [],
+    };
+
+    setTemplates((prevTemplates) => new Map(prevTemplates).set(newTemplatePk, newTemplate));
+    setTemplatesOrders((prevTemplatesOrders) => {
+      const prevTemplatesOrdersMap = new Map(prevTemplatesOrders);
+      const prevOrders = prevTemplatesOrdersMap?.get(selectedTabPk);
+
+      prevTemplatesOrdersMap?.set(
+        selectedTabPk,
+        prevOrders ? [newTemplatePk, ...prevOrders] : [newTemplatePk],
+      );
+      return prevTemplatesOrdersMap;
+    });
+  };
+
   return (
     <div className="flex flex-col justify-start">
+      <button className="border border-2 border-black" onClick={addTemplate}>
+        템플릿 추가 +
+      </button>
       {templatesForComponent.map((template) => (
         <Template key={template?.name} name={template?.name} />
       ))}
