@@ -217,11 +217,9 @@ const Templates = () => {
   const [templatesOrders, setTemplatesOrders] = useAtom(templatesOrdersAtom);
   const [templates, setTemplates] = useAtom(templatesAtom);
 
-  const selectedTabsTemplatesOrders = templatesOrders?.get(selectedTabPk);
-
-  const templatesForComponent = selectedTabsTemplatesOrders?.map((template) =>
-    templates?.get(template),
-  );
+  const templatesForComponent = templatesOrders
+    ?.get(selectedTabPk)
+    ?.map((template) => templates?.get(template));
 
   const addTemplate = () => {
     const newTemplatePk = `new-template-${templates?.size ? templates.size + 1 : 1}`;
@@ -240,6 +238,7 @@ const Templates = () => {
         selectedTabPk,
         prevOrders ? [newTemplatePk, ...prevOrders] : [newTemplatePk],
       );
+
       return prevTemplatesOrdersMap;
     });
   };
@@ -256,4 +255,4 @@ const Templates = () => {
   );
 };
 
-const Template = ({ name }: TemplateEntity) => <div>{name}</div>;
+const Template = ({ name }: TemplateType) => <div>{name}</div>;
