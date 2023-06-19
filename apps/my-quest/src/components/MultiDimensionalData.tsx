@@ -1,59 +1,25 @@
 'use client';
 import { useEffect } from 'react';
-import { atom, useSetAtom, useAtomValue, useAtom } from 'jotai';
+import { useSetAtom, useAtomValue, useAtom } from 'jotai';
 
-/**
- * common
- */
-type ComponentsPk = number | string;
-type Orders = ComponentsPk[];
+import {
+  TabEntity,
+  TabMap,
+  TabOrderType,
+  TemplateMap,
+  TemplateOrderType,
+  ComponentsPk,
+  TabType,
+  TemplateType,
+} from '~/types/multi-dimensional-data';
 
-type WithComponentsPk = {
-  pk: ComponentsPk;
-};
-
-/**
- * entity
- */
-type TabEntity = {
-  pk: number;
-  name: string;
-  templates: TemplateEntity[];
-};
-
-type TemplateEntity = {
-  pk: number;
-  name: string;
-  items: ItemEntity[];
-};
-
-type ItemEntity = {
-  pk: number;
-  name: string;
-};
-
-/**
- * for state mangement & components
- */
-type TabType = Pick<TabEntity, 'name'> & WithComponentsPk;
-type TemplateType = Omit<TemplateEntity, 'pk'> & WithComponentsPk;
-
-type TabMap = Map<ComponentsPk, TabType>;
-type TemplateMap = Map<ComponentsPk, TemplateType>;
-
-type TabOrderType = Orders;
-type TemplateOrderType = Map<ComponentsPk, Orders>;
-
-/**
- * atom
- */
-
-const tabsAtom = atom<TabMap | null>(null);
-const tabsOrdersAtom = atom<TabOrderType>([]);
-const selectedTabPkAtom = atom<ComponentsPk>(0);
-
-const templatesAtom = atom<TemplateMap | null>(null);
-const templatesOrdersAtom = atom<TemplateOrderType | null>(null);
+import {
+  tabsAtom,
+  tabsOrdersAtom,
+  selectedTabPkAtom,
+  templatesAtom,
+  templatesOrdersAtom,
+} from '~/store/multi-dimensional-data';
 
 /**
  * temp data
