@@ -12,10 +12,13 @@
     "utils": "yarn workspace @holywater-jeong/utils",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
+    "smp-dev": "turbo run dev --filter=@holywater-jeong/share-my-plan",
+    "mq-dev": "turbo run dev --filter=@holywater-jeong/my-quest",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "eslint": "8.43.0",
     "eslint-config-custom": "*",
     "prettier": "latest",
     "turbo": "latest"

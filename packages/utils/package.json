@@ -2,5 +2,9 @@
   "name": "@holywater-jeong/utils",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "types": "index.ts",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0"
+  }
 }
