@@ -166,11 +166,12 @@ const Tabs = () => {
   });
 
   const addTab = () => {
-    // 추가
-    const newTabPk = `new-tab-${tabs?.size ? tabs.size + 1 : 1}`;
+    const pkNum = tabs?.size ? tabs.size + 1 : 1;
+
+    const newTabPk = `new-tab-${pkNum}`;
     const newTab: TabType = {
       pk: newTabPk,
-      name: `새로운 탭`,
+      name: `새로운 탭 ${pkNum}`,
     };
 
     setTabs((prevTabs) => new Map(prevTabs).set(newTabPk, newTab));
@@ -214,10 +215,12 @@ const Templates = () => {
   const templatesBySelectedTab = templatesOrders?.get(selectedTabPk);
 
   const addTemplate = () => {
-    const newTemplatePk = `new-template-${templates?.size ? templates.size + 1 : 1}`;
+    const pkNum = templates?.size ? templates.size + 1 : 1;
+
+    const newTemplatePk = `new-template-${pkNum}`;
     const newTemplate: TemplateType = {
       pk: newTemplatePk,
-      name: `새로운 템플릿`,
+      name: `새로운 템플릿 ${pkNum}`,
     };
 
     setTemplates((prevTemplates) => new Map(prevTemplates).set(newTemplatePk, newTemplate));
@@ -256,10 +259,12 @@ const Template = ({ templatePk }: { templatePk: ComponentsPk }) => {
   const itemsByTemplate = itemsOrders?.get(templatePk);
 
   const addProduct = () => {
-    const newItemPk = `new-template-${items?.size ? items.size + 1 : 1}`;
+    const pkNum = items?.size ? items.size + 1 : 1;
+
+    const newItemPk = `new-template-${pkNum}`;
     const newItem: ItemType = {
       pk: newItemPk,
-      name: `새로운 아이템`,
+      name: `새로운 아이템 ${pkNum}`,
     };
 
     setItems((prevItems) => new Map(prevItems).set(newItemPk, newItem));
