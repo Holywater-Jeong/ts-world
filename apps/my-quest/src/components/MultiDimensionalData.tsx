@@ -253,10 +253,7 @@ const Template = ({ templatePk }: { templatePk: ComponentsPk }) => {
   const [itemsOrders, setItemsOrders] = useAtom(itemsOrdersAtom);
 
   const template = templates?.get(templatePk);
-
-  if (!template) return null;
-
-  const itemsForComponent = itemsOrders?.get(templatePk);
+  const itemsByTemplate = itemsOrders?.get(templatePk);
 
   const addProduct = () => {
     const newItemPk = `new-template-${items?.size ? items.size + 1 : 1}`;
@@ -276,13 +273,14 @@ const Template = ({ templatePk }: { templatePk: ComponentsPk }) => {
     });
   };
 
+  if (!template) return null;
   return (
     <div className="flex flex-col justify-start border border-2 border-black my-1.5">
       <div>{template.name}</div>
       <button className="border border-2 border-neutral-300" onClick={addProduct}>
         상품 추가 +
       </button>
-      {itemsForComponent?.map((itemPk) => (
+      {itemsByTemplate?.map((itemPk) => (
         <Item key={itemPk} itemPk={itemPk} />
       ))}
     </div>
@@ -295,6 +293,5 @@ const Item = ({ itemPk }: { itemPk: ComponentsPk }) => {
   const item = items?.get(itemPk);
 
   if (!item) return null;
-
   return <div>{item.name}</div>;
 };
