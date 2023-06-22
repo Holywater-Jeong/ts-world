@@ -166,11 +166,12 @@ const Tabs = () => {
   });
 
   const addTab = () => {
-    // 추가
-    const newTabPk = `new-tab-${tabs?.size ? tabs.size + 1 : 1}`;
+    const pkNum = tabs?.size ? tabs.size + 1 : 1;
+
+    const newTabPk = `new-tab-${pkNum}`;
     const newTab: TabType = {
       pk: newTabPk,
-      name: `새로운 탭`,
+      name: `새로운 탭 ${pkNum}`,
     };
 
     setTabs((prevTabs) => new Map(prevTabs).set(newTabPk, newTab));
@@ -211,15 +212,15 @@ const Templates = () => {
   const [templatesOrders, setTemplatesOrders] = useAtom(templatesOrdersAtom);
   const [templates, setTemplates] = useAtom(templatesAtom);
 
-  const templatesForComponent = templatesOrders
-    ?.get(selectedTabPk)
-    ?.map((template) => templates?.get(template));
+  const templatesBySelectedTab = templatesOrders?.get(selectedTabPk);
 
   const addTemplate = () => {
-    const newTemplatePk = `new-template-${templates?.size ? templates.size + 1 : 1}`;
+    const pkNum = templates?.size ? templates.size + 1 : 1;
+
+    const newTemplatePk = `new-template-${pkNum}`;
     const newTemplate: TemplateType = {
       pk: newTemplatePk,
-      name: `새로운 템플릿`,
+      name: `새로운 템플릿 ${pkNum}`,
     };
 
     setTemplates((prevTemplates) => new Map(prevTemplates).set(newTemplatePk, newTemplate));
@@ -241,51 +242,61 @@ const Templates = () => {
       <button className="border border-2 border-black" onClick={addTemplate}>
         템플릿 추가 +
       </button>
-      {templatesForComponent?.map((template) => (
-        // TODO: 여기 타입을 어떻게 해결할 수 있을지 고민해보자;
-        <Template key={template?.name} {...template} />
+      {templatesBySelectedTab?.map((templatePk) => (
+        <Template key={templatePk} templatePk={templatePk} />
       ))}
     </div>
   );
 };
 
-const Template = ({ name, pk }: Partial<TemplateType>) => {
+const Template = ({ templatePk }: { templatePk: ComponentsPk }) => {
+  const templates = useAtomValue(templatesAtom);
+
   const [items, setItems] = useAtom(itemsAtom);
   const [itemsOrders, setItemsOrders] = useAtom(itemsOrdersAtom);
 
-  if (!pk) return null;
-
-  const itemsForComponent = itemsOrders?.get(pk)?.map((item) => items?.get(item));
+  const template = templates?.get(templatePk);
+  const itemsByTemplate = itemsOrders?.get(templatePk);
 
   const addProduct = () => {
-    const newItemPk = `new-template-${items?.size ? items.size + 1 : 1}`;
+    const pkNum = items?.size ? items.size + 1 : 1;
+
+    const newItemPk = `new-template-${pkNum}`;
     const newItem: ItemType = {
       pk: newItemPk,
-      name: `새로운 아이템`,
+      name: `새로운 아이템 ${pkNum}`,
     };
 
     setItems((prevItems) => new Map(prevItems).set(newItemPk, newItem));
     setItemsOrders((prevItemsOrders) => {
       const prevItemsOrdersMap = new Map(prevItemsOrders);
-      const prevOrders = prevItemsOrdersMap?.get(pk);
+      const prevOrders = prevItemsOrdersMap?.get(templatePk);
 
-      prevItemsOrdersMap?.set(pk, prevOrders ? [newItemPk, ...prevOrders] : [newItemPk]);
+      prevItemsOrdersMap?.set(templatePk, prevOrders ? [newItemPk, ...prevOrders] : [newItemPk]);
 
       return prevItemsOrdersMap;
     });
   };
 
+  if (!template) return null;
   return (
     <div className="flex flex-col justify-start border border-2 border-black my-1.5">
-      <div>{name}</div>
+      <div>{template.name}</div>
       <button className="border border-2 border-neutral-300" onClick={addProduct}>
         상품 추가 +
       </button>
-      {itemsForComponent?.map((item) => (
-        <Item key={item?.name} {...item} />
+      {itemsByTemplate?.map((itemPk) => (
+        <Item key={itemPk} itemPk={itemPk} />
       ))}
     </div>
   );
 };
 
-const Item = ({ name }: Partial<ItemType>) => <div>{name}</div>;
+const Item = ({ itemPk }: { itemPk: ComponentsPk }) => {
+  const items = useAtomValue(itemsAtom);
+
+  const item = items?.get(itemPk);
+
+  if (!item) return null;
+  return <div>{item.name}</div>;
+};
