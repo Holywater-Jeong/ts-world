@@ -5,14 +5,13 @@ import { useSetAtom, useAtom } from 'jotai';
 import { ORIGIN_SHOPPING_TABS_DATA } from '~/constants';
 
 import {
-  TabMap,
-  TabOrderType,
-  TemplateMap,
-  TemplateOrderType,
   ComponentsPk,
+  Orders,
+  PkOrderMap,
   TabType,
+  TabMap,
+  TemplateMap,
   ItemMap,
-  ItemOrderType,
 } from '~/types/multi-dimensional-data';
 
 import {
@@ -41,13 +40,13 @@ export const MultiDimensionalData = () => {
 
   const initTabs = () => {
     const tabs: TabMap = new Map();
-    const tabsOrders: TabOrderType = [];
+    const tabsOrders: Orders = [];
 
     const templates: TemplateMap = new Map();
-    const templatesOrders: TemplateOrderType = new Map();
+    const templatesOrders: PkOrderMap = new Map();
 
     const items: ItemMap = new Map();
-    const itemsOrders: ItemOrderType = new Map();
+    const itemsOrders: PkOrderMap = new Map();
 
     ORIGIN_SHOPPING_TABS_DATA.forEach((tab) => {
       const tabPk = tab.pk;
