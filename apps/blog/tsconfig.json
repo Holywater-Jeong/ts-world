@@ -13,7 +13,6 @@
     "paths": {
       "@/*": ["./*"],
       "contentlayer/generated": ["./.contentlayer/generated"]
-    },
-    "strictNullChecks": true
+    }
   }
 }
