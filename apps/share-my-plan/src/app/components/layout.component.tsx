@@ -2,7 +2,7 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import React from 'react';
+import Image from 'next/image';
 
 export const AppBar = () => {
   const { data: session } = useSession();
@@ -16,7 +16,11 @@ export const AppBar = () => {
       <div className="flex gap-2 ml-auto">
         {session?.user ? (
           <>
-            <img className="w-8 h-8 rounded-full" src={session.user.image || ''} />
+            <Image
+              className="w-8 h-8 rounded-full"
+              src={session.user.image || ''}
+              alt="User Profile Image"
+            />
             <p className="text-sky-600"> {session.user.email}</p>
             <button className="text-red-500" onClick={() => signOut()}>
               Sign Out
